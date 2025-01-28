@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<Pane minHeight="450.0" prefWidth="450.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.studenthousingsystem.SearchForDormController">
+   <children>
+      <ImageView fx:id="profilePic" fitHeight="47.0" fitWidth="45.0" layoutX="384.0" layoutY="14.0" onMouseClicked="#onProfilePicClicked" pickOnBounds="true" preserveRatio="true" />
+      <TextField fx:id="searchField" layoutX="36.0" layoutY="22.0" prefHeight="28.0" prefWidth="298.0" />
+      <TableView fx:id="roomTable" layoutX="34.0" layoutY="73.0" prefHeight="316.0" prefWidth="380.0">
+        <columns>
+          <TableColumn fx:id="RoomNo" prefWidth="308.0" text="RoomNo" />
+        </columns>
+      </TableView>
+      <Button fx:id="logoutBtn" layoutX="174.0" layoutY="398.0" mnemonicParsing="false" onAction="#onLogoutBtnClicked" prefHeight="38.0" prefWidth="101.0" text="&lt; Logout">
+         <font>
+            <Font name="Goudy Old Style Bold" size="14.0" />
+         </font>
+      </Button>
+   </children>
+</Pane>

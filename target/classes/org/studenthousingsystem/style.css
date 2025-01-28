@@ -1,0 +1,84 @@
+
+Pane {
+    -fx-background-color: #f0f0f0;
+}
+
+
+Button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-family: "Arial";
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 5px;
+    -fx-effect: dropshadow(three-pass-box, #000000, 10, 0, 0, 0);
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s ease;
+}
+
+
+Button:pressed {
+    -fx-translate-y: 2px;
+    -fx-effect: dropshadow(three-pass-box, #000000, 5, 0, 0, 0);
+    -fx-translate-x: 10px;
+}
+
+
+Button:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+
+Label {
+    -fx-font-family: "Arial";
+    -fx-font-size: 12px;
+}
+
+
+TextField, PasswordField {
+    -fx-font-family: "Arial";
+    -fx-font-size: 12px;
+    -fx-prompt-text-fill: #808080;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px;
+}
+
+
+ChoiceBox {
+    -fx-font-family: "Arial";
+    -fx-font-size: 12px;
+}
+
+/* Styling for RadioButtons */
+RadioButton {
+    -fx-font-family: "Arial";
+    -fx-font-size: 12px;
+}
+
+/* Styling for VBox and HBox */
+VBox, HBox {
+    -fx-spacing: 10px; /* Spacing between children */
+}
+
+/* Styling for Buttons inside HBox */
+HBox Button {
+    -fx-background-color: #f44336; /* Red */
+}
+
+/* Styling for Labels inside HBox */
+HBox Label {
+    -fx-text-fill: #333333; /* Dark gray text color */
+}
+
+/* Styling for Font */
+.font-bold {
+    -fx-font-weight: bold;
+}
+
+.font-italic {
+    -fx-font-style: italic;
+}

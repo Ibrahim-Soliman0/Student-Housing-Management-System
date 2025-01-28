@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<Pane fx:id="mychoiceBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="450.0" style="-fx-background-color: #40577a;" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.studenthousingsystem.StudentAddController">
+   <children>
+      <Label fx:id="email_label" alignment="CENTER" layoutX="98.0" layoutY="31.0" maxHeight="28.0" prefHeight="28.0" prefWidth="47.0" style="-fx-font-weight: bold;" text="Email" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label fx:id="Password_label" alignment="CENTER" layoutX="88.0" layoutY="87.0" prefHeight="34.0" prefWidth="66.0" style="-fx-font-weight: bold;" text="Password" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label fx:id="id_label" alignment="CENTER" layoutX="82.0" layoutY="155.0" prefHeight="18.0" prefWidth="76.0" style="-fx-font-weight: bold;" text="ID" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label fx:id="name_label" alignment="CENTER" layoutX="82.0" layoutY="210.0" prefHeight="33.0" prefWidth="74.0" style="-fx-font-weight: bold;" text="Name" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label fx:id="city_label" alignment="CENTER" layoutX="83.0" layoutY="266.0" prefHeight="26.0" prefWidth="75.0" style="-fx-font-weight: bold;" text="City" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <TextField fx:id="email_textfield" layoutX="195.0" layoutY="29.0" promptText="Enter your email !" />
+      <PasswordField fx:id="password_passwordField" layoutX="195.0" layoutY="90.0" promptText="Enter your password !" />
+      <TextField fx:id="id_textfield" layoutX="194.0" layoutY="158.0" prefHeight="0.0" prefWidth="150.0" promptText="Enter your ID !" />
+      <TextField fx:id="name_textfield" layoutX="195.0" layoutY="218.0" prefHeight="1.0" prefWidth="126.0" promptText="Enter your Name !" />
+      <ChoiceBox fx:id="myChoiceBox" blendMode="SRC_ATOP" layoutX="194.0" layoutY="269.0" prefWidth="150.0" />
+      <Button fx:id="addButton" layoutX="102.0" layoutY="352.0" mnemonicParsing="false" onAction="#addButtonAction" style="-fx-font-weight: bold;" text="Add">
+      <font>
+         <Font name="System Bold" size="12.0" />
+      </font></Button>
+
+      <Button fx:id="showAdminpage_btn" layoutX="277.0" layoutY="352.0" mnemonicParsing="false" onAction="#showAdminPage" style="-fx-font-weight: bold;" text="Back">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font></Button>
+
+      <Label fx:id="myLabel" alignment="CENTER" layoutX="310.0" layoutY="279.0" prefHeight="25.0" prefWidth="114.0">
+         <font>
+            <Font name="System Bold Italic" size="12.0" />
+         </font></Label>
+   </children>
+</Pane>

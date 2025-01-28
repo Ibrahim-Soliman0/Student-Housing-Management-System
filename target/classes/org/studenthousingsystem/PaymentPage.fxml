@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="450.0" prefWidth="450.0" style="-fx-background-color: #40577a;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.studenthousingsystem.PaymentController">
+   <children>
+      <VBox alignment="CENTER" layoutX="105.0" layoutY="36.0" spacing="70.0">
+         <children>
+            <Label contentDisplay="CENTER" prefHeight="36.0" prefWidth="105.0" text="Payment" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="25.0" />
+               </font>
+            </Label>
+            <VBox alignment="CENTER_RIGHT" spacing="20.0">
+               <children>
+                  <Group>
+                     <children>
+                        <Label layoutY="4.0" text="Card Number:" textFill="WHITE" />
+                        <TextField fx:id="cardNumber" layoutX="81.0" promptText="NUMBER ON CARD" />
+                     </children>
+                  </Group>
+                  <Group>
+                     <children>
+                        <Label layoutY="4.0" text="Card Holder:" textFill="WHITE" />
+                        <TextField fx:id="cardName" layoutX="74.0" promptText="NAME ON CARD" />
+                     </children>
+                  </Group>
+               </children>
+            </VBox>
+            <HBox spacing="80.0">
+               <children>
+                  <Group>
+                     <children>
+                        <Label layoutY="4.0" text="Date" textFill="WHITE" />
+                        <TextField fx:id="cardDate" layoutX="30.0" prefHeight="25.0" prefWidth="50.0" promptText="MM/Y" />
+                     </children>
+                  </Group>
+                  <Group layoutX="173.0" layoutY="10.0">
+                     <children>
+                        <Label layoutY="4.0" text="CVV" textFill="WHITE" />
+                        <TextField fx:id="cvv" layoutX="30.0" prefHeight="25.0" prefWidth="50.0" promptText="CVV" />
+                     </children>
+                  </Group>
+               </children>
+            </HBox>
+            <Button fx:id="payButton" mnemonicParsing="false" onAction="#onpayButtonClick" prefHeight="36.0" prefWidth="91.0" style="-fx-background-color: #4caf50;" text="Pay" textFill="WHITE">
+               <font>
+                  <Font size="15.0" />
+               </font>
+               <effect>
+                  <DropShadow />
+               </effect>
+            </Button>
+         </children>
+      </VBox>
+      <Button fx:id="paymentBackButton" layoutX="14.0" layoutY="378.0" mnemonicParsing="false" onAction="#onBackButtonClick" prefHeight="36.0" prefWidth="91.0" style="-fx-background-color: #4caf50;" text="&lt; Back" textFill="WHITE">
+         <font>
+            <Font size="15.0" />
+         </font>
+         <effect>
+            <DropShadow />
+         </effect>
+      </Button>
+   </children>
+</AnchorPane>

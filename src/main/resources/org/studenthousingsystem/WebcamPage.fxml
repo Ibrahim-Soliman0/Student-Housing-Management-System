@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="450.0" prefWidth="450.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.studenthousingsystem.ScannerController">
+   <children>
+      <ImageView fx:id="cameraFeed" fitHeight="341.0" fitWidth="411.0" layoutX="20.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
+      <Button fx:id="scanButton" layoutX="170.0" layoutY="392.0" mnemonicParsing="false" onAction="#onScanClick" prefHeight="43.0" prefWidth="110.0" text="Scan" textFill="#29d490">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+         <effect>
+            <DropShadow />
+         </effect>
+      </Button>
+      <Label fx:id="studentID" contentDisplay="CENTER" layoutX="103.0" layoutY="355.0" prefHeight="30.0" prefWidth="244.0" textFill="#0695ee">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </Label>
+      <Button fx:id="backButton" layoutX="20.0" layoutY="392.0" mnemonicParsing="false" onAction="#onBackClick" prefHeight="44.0" prefWidth="92.0" text="&lt; Back" textFill="#29d490">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+         <effect>
+            <DropShadow />
+         </effect>
+      </Button>
+   </children>
+</AnchorPane>
