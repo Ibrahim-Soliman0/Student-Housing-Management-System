@@ -7,8 +7,8 @@ module org.example.studenthousingsystem {
     requires java.logging;
     requires java.sql;
     requires com.google.zxing;
-    requires sendgrid.java;
-    requires com.oracle.database.jdbc;
+    requires org.postgresql.jdbc;
+//    requires sendgrid.java;
 
 
     opens org.studenthousingsystem to javafx.fxml;

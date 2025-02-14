@@ -6,10 +6,11 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.Connection;
 
 public class StudentHousingSystem extends Application {
 
-//    public static Connection conn = Database.InitConn();
+    public static Connection conn = Database.InitConn();
 
     public static Student student = new Student("ibrahim" , "ibrahim@gmail.com", "2022", "Alex");
     public static Admin admin;

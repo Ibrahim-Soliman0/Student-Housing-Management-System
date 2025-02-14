@@ -47,6 +47,7 @@ public class Student extends Person {
     public void setApplied(int applied) {
         this.applied = applied;
     }
+
     public int getApplied() {
         return applied;
     }
