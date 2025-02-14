@@ -18,7 +18,7 @@ public class StudentHousingSystem extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(StudentHousingSystem.class.getResource("SearchForDorm.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(StudentHousingSystem.class.getResource("Login.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 450, 450);
         stage.setTitle("Student Housing System");
         stage.setResizable(false);
