@@ -13,7 +13,7 @@ public class StudentHousingSystem extends Application {
     public static Connection conn = Database.InitConn();
 
     public static Student student = new Student("ibrahim" , "ibrahim@gmail.com", "2022", "Alex");
-    public static Admin admin;
+    public static Staff staff;
     public static Gatekeeper gatekeeper;
 
     @Override

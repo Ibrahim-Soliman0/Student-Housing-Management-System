@@ -28,7 +28,7 @@ public class PendingRequestsController {
 
     @FXML
     public void backToAdminPage(ActionEvent actionEvent) throws IOException {
-        root = FXMLLoader.load((getClass().getResource("AdminPage.fxml")));
+        root = FXMLLoader.load((getClass().getResource("StaffPage.fxml")));
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root, 450, 450);
         stage.setScene(scene);
