@@ -68,6 +68,6 @@ public class RoomController {
             isFilled = 0;
         }
 
-//        Database.insertRoomData(roomNumber, floorNumber, isFilled);
+        Database.insertRoomData(roomNumber, floorNumber, isFilled);
     }
 }

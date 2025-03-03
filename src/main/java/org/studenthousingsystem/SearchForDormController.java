@@ -81,7 +81,7 @@ public class SearchForDormController {
     }
 
     public void initialize() {
-//        profilePic.setImage(new Image("C:\\Users\\ibrah\\IdeaProjects\\StudentHousingSystem\\src\\main\\resources\\org\\studenthousingsystem\\ProfilePic.png"));
+        profilePic.setImage(new Image("D:\\Personal\\Github Projects\\student housing system\\Student-Housing-Management-System\\src\\main\\resources\\org\\studenthousingsystem\\ProfilePic.png"));
         RoomNo.setCellValueFactory(new PropertyValueFactory<>("room"));
 
         TableColumn<RoomRequest, Button> actionCol = new TableColumn<>("Action");
@@ -100,7 +100,7 @@ public class SearchForDormController {
     }
 
     @FXML
-    private void onProfilePicClicked(javafx.scene.input.MouseEvent actionEvent) throws SQLException, IOException
+    private void onProfilePicClicked(javafx.scene.input.MouseEvent actionEvent) throws  IOException
     {
         root = FXMLLoader.load((getClass().getResource("StudentProfile.fxml")));
         stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();

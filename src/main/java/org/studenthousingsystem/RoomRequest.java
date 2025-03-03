@@ -10,13 +10,14 @@ public class RoomRequest {
     public RoomRequest(String room) {
         this.room = room;
         this.actionButton = new Button("Apply");
-        if (StudentHousingSystem.student.getApplied() == 0) {
+        if (!StudentHousingSystem.student.isAppliedToRoom())
+        {
             this.actionButton.setOnAction(event -> {
 
                 System.out.println("Applied for: " + room);
 
-//                Database.setAppliedForDorm(StudentHousingSystem.student.getId(), 1);
-                StudentHousingSystem.student.setApplied(1);
+                Database.setAppliedForDorm(StudentHousingSystem.student.getId(), true);
+                StudentHousingSystem.student.setAppliedToRoom(true);
             });
         }
         else {

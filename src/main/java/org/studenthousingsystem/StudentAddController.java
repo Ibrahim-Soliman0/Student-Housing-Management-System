@@ -73,7 +73,7 @@ public class StudentAddController implements Initializable {
         city = myChoiceBox.getValue();
         password = password_passwordField.getText();
 //        hashedPassword = Database.MD5Hash(password);
-        st = new Student(name, email, id, city);
+//        st = new Student(name, email, id, city);
 
         if (password.length() < 8) {
             alert = new Alert(AlertType.ERROR, "Password must be at least 8 characters long.");
@@ -91,7 +91,7 @@ public class StudentAddController implements Initializable {
             alert = new Alert(AlertType.ERROR, "Please choose a city");
             alert.show();
         } else {
-//            Database.insertStudentData(id, name, city, email, hashedPassword, 0, false, 0);
+//            Database.insertStudent(id, name, city, email, hashedPassword, 0, false, 0);
         }
     }
 }

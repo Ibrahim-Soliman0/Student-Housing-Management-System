@@ -2,36 +2,48 @@ package org.studenthousingsystem;
 
 public class Room {
 
-    static int roomNumber , floorNumber ;
-    static int isFilled;
+    private String id, roomNumber, floor, building;
+    private boolean occupied = false;
+    static private int next_id = 1;
 
-
-    public Room(int roomNumber, int floorNumber, int isFilled) {
-        Room.roomNumber = roomNumber;
-        Room.floorNumber = floorNumber;
-        Room.isFilled = isFilled ;
+    public Room(String roomNumber, String floor, String building, boolean occupied) {
+        this.id = String.valueOf(next_id);
+        this.roomNumber = roomNumber;
+        this.floor = floor;
+        this.building = building;
+        this.occupied = occupied;
+        next_id++;
     }
 
-    public int getRoomNumber() {
+    public String getRoomNumber() {
         return roomNumber;
     }
 
-    public int getFloorNumber() {
-        return floorNumber;
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
     }
 
-    public int isFilled() {
-        return isFilled;
+    public String getFloor() {
+        return floor;
     }
 
-    public void setRoomNumber(int roomNumber) {
-        Room.roomNumber = roomNumber;
+    public void setFloor(String floor) {
+        this.floor = floor;
     }
 
-    public void setFloorNumber(int floorNumber) {
-        Room.floorNumber = floorNumber;
+    public String getBuilding() {
+        return building;
     }
 
-    public void setFilled(int isFilled) {Room.isFilled = isFilled;
+    public void setBuilding(String building) {
+        this.building = building;
+    }
+
+    public boolean isOccupied() {
+        return occupied;
+    }
+
+    public void setOccupied(boolean occupied) {
+        this.occupied = occupied;
     }
 }

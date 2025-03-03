@@ -12,12 +12,13 @@ public class StudentHousingSystem extends Application {
 
     public static Connection conn = Database.InitConn();
 
-    public static Student student = new Student("ibrahim" , "ibrahim@gmail.com", "2022", "Alex");
+    public static Student student;
     public static Staff staff;
     public static Gatekeeper gatekeeper;
 
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) throws IOException
+    {
         FXMLLoader fxmlLoader = new FXMLLoader(StudentHousingSystem.class.getResource("Login.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 450, 450);
         stage.setTitle("Student Housing System");
