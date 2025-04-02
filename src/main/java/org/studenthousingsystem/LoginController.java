@@ -26,7 +26,7 @@ public class LoginController {
     @FXML
     private Parent root;
 
-    boolean checkValidCredentials(String email, String password) throws SQLException
+    String checkLoginCredentials(String email, String password) throws SQLException
     {
         if (!email.isEmpty() && !password.isEmpty())
         {
@@ -36,22 +36,28 @@ public class LoginController {
                 {
                     String hashedPassword = Database.MD5Hash(password);
                     if (Database.isSamePassword(email, hashedPassword))
-                    {
-
-                    }
+                        return "";
                     else
-                        throw new Error("The password is not correct");
-                    }
+                        return "The password is not correct";
+                }
                 else
-                    throw new Error("You are not registered or the email is incorrect");
+                    return "You are not registered or the email is incorrect";
             }
             else
-                throw new Error("Please enter a valid email");
+                return "Please enter a valid email";
         }
         else
-           throw new Error("Text Fields must not be empty");
+            return "Text Fields must not be empty";
+    }
 
-        return true;
+    String findPersonType(String email)
+    {
+        if (!Database.isStudent(email).equals("0"))
+            return "Student";
+        else if (!Database.isStaff(email).equals("0"))
+            return "Staff";
+        else
+            return "Gatekeeper";
     }
 
     @FXML
@@ -61,77 +67,53 @@ public class LoginController {
         String email = loginEmailTextField.getText().trim();
         String password = loginPasswordField.getText().trim();
 
-//        try
-//        {
-//            checkValidCredentials(email, password);
-//        }
-//        catch (Exception e)
-//        {
-//            Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage());
-//            alert.show();
-//            return;
-//        }
-
-        if (email.equals("ibrahim@gmail.com") && password.equals("123"))
+        String isValid = checkLoginCredentials(email, password);
+        if (!isValid.isEmpty())
         {
-            root = FXMLLoader.load((getClass().getResource("SearchForDorm.fxml")));
-            stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
-            scene = new Scene(root, 450, 450);
-            stage.setScene(scene);
-            stage.show();
+            Alert alert = new Alert(Alert.AlertType.ERROR, isValid);
+            alert.show();
+            return;
         }
-//        else
-//        {
-//            if (!email.isEmpty() && !password.isEmpty())
-//            {
-//                if (email.matches(".+(?=@).+(?=\\.).+"))
-//                {
-//                    if (Database.isRegEmail(email)) {
-//                        String hashedPassword = Database.MD5Hash(password);
-//                        if (Database.isSamePassword(email, hashedPassword))
-//                        {
-//                            StudentHousingSystem.student = Database.getStudent(email, Database.MD5Hash(password));
-//                            if (StudentHousingSystem.student != null)
-//                            {
-//                                Alert alert = new Alert(Alert.AlertType.INFORMATION, "You have been logged in successfully");
-//                                alert.show();
-//                                if (Database.isAppliedForDorm(StudentHousingSystem.student.getId()) == 1)
-//                                    StudentHousingSystem.student.setAppliedToRoom(true);
-//
-//                                root = FXMLLoader.load((getClass().getResource("SearchForDorm.fxml")));
-//                                stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
-//                                scene = new Scene(root, 450, 450);
-//                                stage.setScene(scene);
-//                                stage.show();
-//                            }
-//                            else
-//                            {
-//                                System.out.println("Error");
-//                            }
-//                        }
-//                        else
-//                        {
-//                            Alert alert = new Alert(Alert.AlertType.ERROR, "The password is not correct");
-//                            alert.show();
-//                        }
-//                    }
-//                    else
-//                    {
-//                        Alert alert = new Alert(Alert.AlertType.ERROR, "You have not applied for dorm or the email is incorrect");
-//                        alert.show();
-//                    }
-//                }
-//                else
-//                {
-//                    Alert alert = new Alert(Alert.AlertType.ERROR, "Please enter a valid email");
-//                    alert.show();
-//                }
-//            }
-//            else
-//            {
-//                Alert alert = new Alert(Alert.AlertType.ERROR, "Text Fields must not be empty");
-//                alert.show();
-//            }
-//        }
+
+        String type = findPersonType(email);
+
+        switch (type)
+        {
+            case "Student":
+                try {
+                    StudentHousingSystem.student = Database.getStudent(Database.isStudent(email));
+                }
+                catch (NullPointerException npe) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Something went wrong");
+                    alert.show();
+                }
+                root = FXMLLoader.load((getClass().getResource("SearchForDorm.fxml")));
+                break;
+            case "Staff":
+                try {
+                    StudentHousingSystem.staff = Database.getStaff(Database.isStaff(email));
+                }
+                catch (NullPointerException npe) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Something went wrong");
+                    alert.show();
+                }
+                root = FXMLLoader.load((getClass().getResource("StaffPage.fxml")));
+                break;
+            case "Gatekeeper":
+                try {
+                    StudentHousingSystem.gatekeeper = Database.getGatekeeper(Database.isGatekeeper(email));
+                }
+                catch (NullPointerException npe) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Something went wrong");
+                    alert.show();
+                }
+                root = FXMLLoader.load((getClass().getResource("ScannerPage.fxml")));
+                break;
+        }
+
+        stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root, 450, 450);
+        stage.setScene(scene);
+        stage.show();
     }
 }

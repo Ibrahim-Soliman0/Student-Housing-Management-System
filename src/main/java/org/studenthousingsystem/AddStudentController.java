@@ -19,12 +19,10 @@ import java.util.ResourceBundle;
 
 
 
-public class StudentAddController implements Initializable {
+public class AddStudentController implements Initializable {
 
     @FXML
     private TextField email_textfield , id_textfield , name_textfield;
-
-
     @FXML
     PasswordField password_passwordField ;
     @FXML
@@ -34,17 +32,9 @@ public class StudentAddController implements Initializable {
     @FXML
     private ChoiceBox<String> myChoiceBox;
 
-    String email, id, name, city, hashedPassword , password  ;
-    Student st;
-
-    static Alert alert;
-    static PreparedStatement preparedStatement = null;
-    static ResultSet resultSet = null;
-
-
-    private String[] Cities = {"Cairo", "Alexandria", "Giza", "Shubra El-Kheima", "Port Said", "Suez", "Luxor", "Aswan",
-            "Tanta", "Mansoura", "Al-Minya", "Fayoum", "Damanhur", "Damietta", "Beni Suef", "Sohag",
-            "Hurghada", "Zagazig", "Asyut", "Qena", "Suez", "Ismailia", "Khusus", "Luxor"};
+    private String[] Cities = {"Alexandria", "Aswan", "Assiout", "Beheira", "Beni Souef", "Cairo", "Dakahleya", "Damietta",
+    "Fayoum", "Gharbeya", "Giza", "Ismailia", "Kafr el-Cheik", "Marsa-Matruh", "Minya", "Menufeya", "New Valley",
+    "North Sinai", "Port Said", "Qalyubiya", "Qena", "Red Sea", "Ach-Charqiya", "Sohag", "South Sinai", "Suez", "Luxor"};
 
     private Stage stage;
     @FXML
@@ -66,32 +56,41 @@ public class StudentAddController implements Initializable {
 
     @FXML
     void addButtonAction() throws SQLException {
-        email_textfield.setPromptText("enter your email");
-        email = email_textfield.getText();
-        id = id_textfield.getText();
-        name = name_textfield.getText();
+        email_textfield.setPromptText("Enter your email");
+
+        String email, id, name, city, password;
+        email = email_textfield.getText().trim();
+        id = id_textfield.getText().trim();
+        name = name_textfield.getText().trim();
         city = myChoiceBox.getValue();
-        password = password_passwordField.getText();
-//        hashedPassword = Database.MD5Hash(password);
-//        st = new Student(name, email, id, city);
+        password = password_passwordField.getText().trim();
+
+        Alert alert;
 
         if (password.length() < 8) {
             alert = new Alert(AlertType.ERROR, "Password must be at least 8 characters long.");
             alert.show();
-        } else if (!email.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")) {
+        }
+        else if (!email.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")) {
             alert = new Alert(AlertType.ERROR, "Invalid email format.");
             alert.show();
-        } else if (id.isEmpty()) {
+        }
+        else if (id.isEmpty()) {
             alert = new Alert(AlertType.ERROR, "ID cannot be empty.");
             alert.show();
-        } else if (name.isEmpty()) {
+        }
+        else if (name.isEmpty()) {
             alert = new Alert(AlertType.ERROR, "Name cannot be empty.");
             alert.show();
-        } else if (city == null) {
+        }
+        else if (city == null) {
             alert = new Alert(AlertType.ERROR, "Please choose a city");
             alert.show();
-        } else {
-//            Database.insertStudent(id, name, city, email, hashedPassword, 0, false, 0);
+        }
+        else {
+            Database.insertStudent(
+                    new Student(id, name, email, city,
+                    Database.MD5Hash(password), 0, false, false));
         }
     }
 }

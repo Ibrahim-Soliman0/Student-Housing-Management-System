@@ -14,6 +14,15 @@ public class Student extends Person {
         this.applied_to_room = applied_to_room;
     }
 
+    public Student(String student_id, String name, String email, String city, String password_hash, int warnings, boolean paymentSuccessful, boolean applied_to_room) {
+        super(name, email, password_hash);
+        this.student_id = student_id;
+        this.city = city;
+        this.warnings = warnings;
+        this.paymentSuccessful = paymentSuccessful;
+        this.applied_to_room = applied_to_room;
+    }
+
     public String getStudentId() {
         return student_id;
     }

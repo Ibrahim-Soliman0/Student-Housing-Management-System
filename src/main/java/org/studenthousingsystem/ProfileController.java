@@ -44,7 +44,7 @@ public class ProfileController {
 
     public void initialize() {
 
-        profileId.setText(StudentHousingSystem.student.getId());
+        profileId.setText(StudentHousingSystem.student.getStudentId());
         profileCity.setText(StudentHousingSystem.student.getCity());
         profileName.setText(StudentHousingSystem.student.getName());
         profileEmail.setText(StudentHousingSystem.student.getEmail());

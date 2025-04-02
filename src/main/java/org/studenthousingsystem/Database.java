@@ -8,7 +8,6 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.ArrayList;
 
-import static org.studenthousingsystem.StudentAddController.alert;
 import static org.studenthousingsystem.StudentHousingSystem.conn;
 
 public class Database {
@@ -90,6 +89,105 @@ public class Database {
         return false;
     }
 
+    public static String isStudent(String email)
+    {
+        String sql = """
+                SELECT
+                    s.id AS s_id
+                 FROM
+                    student AS s
+                    INNER JOIN student_person_data AS spd ON spd.student_id = s.id
+                    INNER JOIN person AS p ON spd.person_id = p.id
+                 WHERE
+                    email = ?;
+                """;
+        try
+        {
+            preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setString(1, email);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next())
+                return resultSet.getString("s_id");
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            closeResources();
+        }
+
+        return "0";
+    }
+
+    public static String isStaff(String email)
+    {
+        String sql = """
+                SELECT
+                    s.id AS s_id
+                FROM
+                    staff AS s
+                    INNER JOIN staff_person_data AS spd ON spd.staff_id = s.id
+                    INNER JOIN person AS p ON spd.person_id = p.id
+                WHERE
+                    email = ?;
+                """;
+        try
+        {
+            preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setString(1, email);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next())
+                return resultSet.getString(1);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            closeResources();
+        }
+
+        return "0";
+    }
+
+    public static String isGatekeeper(String email)
+    {
+        String sql = """
+                SELECT
+                    gk.id AS gk_id
+                FROM
+                    gatekeeper AS gk
+                    INNER JOIN gatekeeper_person_data AS gpd ON gpd.gatekeeper_id = gk.id
+                    INNER JOIN person AS p ON gpd.person_id = p.id
+                WHERE
+                    email = ?;
+                """;
+        try
+        {
+            preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setString(1, email);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next())
+                return resultSet.getString(1);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            closeResources();
+        }
+
+        return "0";
+    }
+
     public static void insertPerson(String id, String email, String name, String password) throws SQLException
     {
         String insertPerson = "INSERT INTO PERSON (id, name, email, password) VALUES (?, ?, ?, ?)";
@@ -136,8 +234,9 @@ public class Database {
 
         try
         {
-            insertPerson(student.getId(), student.getEmail(), student.getName(), student.getPasswordHash());
-            insertStudentPersonData(student.getStudentId(), student.getId());
+            String personId = Database.getNextPersonId();
+            insertPerson(personId, student.getEmail(), student.getName(), student.getPasswordHash());
+            insertStudentPersonData(student.getStudentId(), personId);
             preparedStatement = conn.prepareStatement(insertStudent);
             preparedStatement.setString(1, student.getStudentId());
             preparedStatement.setString(2, student.getCity());
@@ -147,7 +246,7 @@ public class Database {
             int rowsInserted = preparedStatement.executeUpdate();
             if (rowsInserted > 0)
             {
-                alert = new Alert(Alert.AlertType.CONFIRMATION, "Student Added Successfully");
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Student Added Successfully");
                 alert.show();
             }
         }
@@ -183,14 +282,17 @@ public class Database {
         String insertStaff = "INSERT INTO STAFF (ID, SALARY) VALUES (?, ?)";
         try
         {
-            insertPerson(staff.getId(), staff.getEmail(), staff.getName(), staff.getPasswordHash());
+            String staffId = Database.getNextStaffId();
+            String personId = Database.getNextPersonId();
+            insertPerson(personId, staff.getEmail(), staff.getName(), staff.getPasswordHash());
+            insertStaffPersonData(staffId, personId);
             preparedStatement = conn.prepareStatement(insertStaff);
-            preparedStatement.setString(1, staff.getStaff_id());
+            preparedStatement.setString(1, staffId);
             preparedStatement.setDouble(2, staff.getSalary());
             int rowsInserted = preparedStatement.executeUpdate();
             if (rowsInserted > 0)
             {
-                alert = new Alert(Alert.AlertType.CONFIRMATION, "Staff Added Successfully");
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Staff Added Successfully");
                 alert.show();
             }
         }
@@ -226,14 +328,17 @@ public class Database {
         String insertGatekeeper = "INSERT INTO GATEKEEPER (ID, SALARY) VALUES (?, ?)";
         try
         {
-            insertPerson(gatekeeper.getId(), gatekeeper.getEmail(), gatekeeper.getName(), gatekeeper.getPasswordHash());
+            String gatekeeperId = Database.getNextGatekeeperId();
+            String personId = Database.getNextPersonId();
+            insertPerson(personId, gatekeeper.getEmail(), gatekeeper.getName(), gatekeeper.getPasswordHash());
+            insertGatekeeperPersonData(gatekeeperId, personId);
             preparedStatement = conn.prepareStatement(insertGatekeeper);
-            preparedStatement.setString(1, gatekeeper.getGatekeeper_id());
+            preparedStatement.setString(1, gatekeeperId);
             preparedStatement.setDouble(2, gatekeeper.getSalary());
             int rowsInserted = preparedStatement.executeUpdate();
             if (rowsInserted > 0)
             {
-                alert = new Alert(Alert.AlertType.CONFIRMATION, "Gatekeeper Added Successfully");
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Gatekeeper Added Successfully");
                 alert.show();
             }
         }
@@ -245,16 +350,20 @@ public class Database {
         }
     }
 
-    public static void insertRoomData(int roomNumber, int floorNumber, int isFilled) {
-        String sql = "INSERT INTO ROOM (ROOM_NUMBER, FLOOR, OCCUPIED) VALUES (?, ?, ?)";
-        try {
+    public static void insertRoomData(Room room)
+    {
+        String sql = "INSERT INTO ROOM (ID, ROOM_NUMBER, BUILDING, FLOOR, OCCUPIED) VALUES (?, ?, ?, ?, ?)";
+        try
+        {
             preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setInt(1, roomNumber);
-            preparedStatement.setInt(2, floorNumber);
-            preparedStatement.setInt(3, isFilled);
+            preparedStatement.setString(1, Database.getNextRoomId());
+            preparedStatement.setString(2, room.getRoomNumber());
+            preparedStatement.setString(3, room.getBuilding());
+            preparedStatement.setString(4, room.getFloor());
+            preparedStatement.setBoolean(5, room.isOccupied());
             int rowsInserted = preparedStatement.executeUpdate();
             if (rowsInserted > 0) {
-                alert = new Alert(Alert.AlertType.CONFIRMATION, "Room Added Successfully");
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Room Added Successfully");
                 alert.show();
             }
         } catch (SQLException e) {
@@ -265,7 +374,7 @@ public class Database {
     }
 
 
-    public static int isAppliedForDorm(String id) throws SQLException
+    public static String isAppliedForDorm(String id) throws SQLException
     {
         String sql = "SELECT apllied_to_room FROM STUDENT WHERE id = ?";
         try {
@@ -273,12 +382,12 @@ public class Database {
             preparedStatement.setString(1, id);
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                return resultSet.getInt(1);
+                return resultSet.getString(1);
             }
         } finally {
             closeResources();
         }
-        return 0;
+        return "0";
     }
 
 
@@ -370,9 +479,19 @@ public class Database {
     {
         String selectallStudents = """
                 SELECT
-                    *
+                    s.id AS s_id,
+                    city,
+                    warnings,
+                    payment,
+                    applied_to_room,
+                    p.id AS p_id,
+                    email,
+                    name,
+                    password
                 FROM
-                    student;
+                    student AS s
+                    INNER JOIN student_person_data AS spd ON spd.student_id = s.id
+                    INNER JOIN person AS p ON spd.person_id = p.id;
                 """;
 
         ArrayList<Student> allStudents = new ArrayList<>();
@@ -380,7 +499,7 @@ public class Database {
         {
             preparedStatement = conn.prepareStatement(selectallStudents);
             resultSet = preparedStatement.executeQuery();
-            if (resultSet.next())
+            while (resultSet.next())
             {
                 String id = resultSet.getString(1);
                 String city = resultSet.getString(2);
@@ -392,7 +511,6 @@ public class Database {
                 String name = resultSet.getString(8);
                 String password = resultSet.getString(9);
                 allStudents.add(new Student(id, name, email, city, password, warnings, payment, applied_to_room, pId));
-                return allStudents;
             }
         }
         catch (SQLException e) {
@@ -405,39 +523,39 @@ public class Database {
         return allStudents;
     }
 
-    public static int personSize() throws SQLException
+    public static Staff getStaff(String id) throws SQLException
     {
-        int totalCount = getAllStudents().size();
-        String getLastGatekeeperId = """
+        String selectStaff = """
                 SELECT
-                    max(id)
+                    s.id AS s_id,
+                    salary,
+                    p.id AS p_id,
+                    email,
+                    name,
+                    password
                 FROM
-                    gatekeeper;
-                """;
-
-        String getLastStaffId = """
-                SELECT
-                    max(id)
-                FROM
-                    staff;
+                    staff AS s
+                    INNER JOIN staff_person_data AS spd ON spd.staff_id = s.id
+                    INNER JOIN person AS p ON spd.person_id = p.id
+                WHERE
+                    s.id = ?;
                 """;
 
         try
         {
-            preparedStatement = conn.prepareStatement(getLastGatekeeperId);
+            preparedStatement = conn.prepareStatement(selectStaff);
+            preparedStatement.setString(1, id);
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next())
             {
-                String id = resultSet.getString(1);
-                totalCount += Integer.parseInt(id);
-            }
+                id = resultSet.getString(1);
+                double salary = resultSet.getDouble(2);
+                String pId = resultSet.getString(3);
+                String email = resultSet.getString(4);
+                String name = resultSet.getString(5);
+                String password = resultSet.getString(6);
 
-            preparedStatement = conn.prepareStatement(getLastStaffId);
-            resultSet = preparedStatement.executeQuery();
-            if (resultSet.next())
-            {
-                String id = resultSet.getString(1);
-                totalCount += Integer.parseInt(id);
+                return new Staff(name, email, salary, pId, password, id);
             }
         }
         catch (SQLException e) {
@@ -447,6 +565,176 @@ public class Database {
             closeResources();
         }
 
-        return totalCount;
+        return null;
+    }
+
+    public static Gatekeeper getGatekeeper(String id) throws SQLException
+    {
+        String selectGatekeeper = """
+                SELECT
+                    gk.id AS gk_id,
+                    salary,
+                    p.id AS p_id,
+                    email,
+                    name,
+                    password
+                FROM
+                    gatekeeper AS gk
+                    INNER JOIN gatekeeper_person_data AS gpd ON gpd.gatekeeper_id = gk.id
+                    INNER JOIN person AS p ON gpd.person_id = p.id
+                WHERE
+                    gk.id = ?;
+                """;
+
+        try
+        {
+            preparedStatement = conn.prepareStatement(selectGatekeeper);
+            preparedStatement.setString(1, id);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next())
+            {
+                id = resultSet.getString(1);
+                double salary = resultSet.getDouble(2);
+                String pId = resultSet.getString(3);
+                String email = resultSet.getString(4);
+                String name = resultSet.getString(5);
+                String password = resultSet.getString(6);
+
+                return new Gatekeeper(name, email, salary, pId, password, id);
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            closeResources();
+        }
+
+        return null;
+    }
+
+    public static String getNextPersonId()
+    {
+        String nextPersonId = """
+                SELECT nextval('person_id_seq');
+                """;
+
+        try
+        {
+            preparedStatement = conn.prepareStatement(nextPersonId);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next())
+            {
+                return String.valueOf(resultSet.getInt(1));
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            closeResources();
+        }
+
+        return "0";
+    }
+
+    public static String getNextStaffId()
+    {
+        String nextSaffId = """
+                SELECT nextval('staff_id_seq');
+                """;
+
+        try
+        {
+            preparedStatement = conn.prepareStatement(nextSaffId);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next())
+            {
+                return String.valueOf(resultSet.getInt(1));
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            closeResources();
+        }
+
+        return "0";
+    }
+
+    public static String getNextGatekeeperId()
+    {
+        String nextGatekeeperId = """
+                SELECT nextval('gatekeeper_id_seq');
+                """;
+
+        try
+        {
+            preparedStatement = conn.prepareStatement(nextGatekeeperId);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next())
+            {
+                return String.valueOf(resultSet.getInt(1));
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            closeResources();
+        }
+
+        return "0";
+    }
+
+    public static String getNextRoomId()
+    {
+        String nextRoomId = """
+                SELECT nextval('room_id_seq');
+                """;
+
+        try
+        {
+            preparedStatement = conn.prepareStatement(nextRoomId);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next())
+            {
+                return String.valueOf(resultSet.getInt(1));
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            closeResources();
+        }
+
+        return "0";
+    }
+
+    public static String getNextEntranceLogId()
+    {
+        String nextEntranceLogId = """
+                SELECT nextval('entrance_log_id_seq');
+                """;
+
+        try
+        {
+            preparedStatement = conn.prepareStatement(nextEntranceLogId);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next())
+            {
+                return String.valueOf(resultSet.getInt(1));
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            closeResources();
+        }
+
+        return "0";
     }
 }

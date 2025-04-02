@@ -4,15 +4,20 @@ public class Room {
 
     private String id, roomNumber, floor, building;
     private boolean occupied = false;
-    static private int next_id = 1;
 
-    public Room(String roomNumber, String floor, String building, boolean occupied) {
-        this.id = String.valueOf(next_id);
+    public Room(String roomNumber, String floor, String building, boolean occupied, String id) {
+        this.id = id;
         this.roomNumber = roomNumber;
         this.floor = floor;
         this.building = building;
         this.occupied = occupied;
-        next_id++;
+    }
+
+    public Room(String roomNumber, String floor, String building, boolean occupied) {
+        this.roomNumber = roomNumber;
+        this.floor = floor;
+        this.building = building;
+        this.occupied = occupied;
     }
 
     public String getRoomNumber() {

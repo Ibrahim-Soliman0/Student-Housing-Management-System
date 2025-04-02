@@ -4,13 +4,16 @@ public class Gatekeeper extends Person {
 
     private String gatekeeper_id;
     private double salary;
-    static private int next_id = 1;
 
-    public Gatekeeper(String name, String email, double salary, String pId, String passwordHash) {
+    public Gatekeeper(String name, String email, double salary, String pId, String passwordHash, String gatekeeper_id) {
         super(name, email, pId, passwordHash);
-        this.gatekeeper_id = String.valueOf(next_id);
+        this.gatekeeper_id = gatekeeper_id;
         this.salary = salary;
-        next_id++;
+    }
+
+    public Gatekeeper(String name, String email, double salary, String passwordHash) {
+        super(name, email, passwordHash);
+        this.salary = salary;
     }
 
     public String getGatekeeper_id() {

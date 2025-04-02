@@ -15,6 +15,7 @@ public class StudentHousingSystem extends Application {
     public static Student student;
     public static Staff staff;
     public static Gatekeeper gatekeeper;
+    public static Room room;
 
     @Override
     public void start(Stage stage) throws IOException
