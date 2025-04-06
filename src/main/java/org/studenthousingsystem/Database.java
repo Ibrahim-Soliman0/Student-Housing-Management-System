@@ -9,7 +9,9 @@ import java.sql.*;
 import java.util.ArrayList;
 
 import static org.studenthousingsystem.StudentHousingSystem.conn;
+import static org.studenthousingsystem.StudentHousingSystem.staff;
 
+@SuppressWarnings("DuplicatedCode")
 public class Database {
 
     static PreparedStatement preparedStatement;
@@ -54,7 +56,7 @@ public class Database {
         }
     }
 
-    public static boolean isRegEmail(String email) throws SQLException
+    public static boolean isRegEmail(String email)
     {
         String sql = "SELECT * FROM PERSON WHERE Email=?";
         try
@@ -64,13 +66,16 @@ public class Database {
             resultSet = preparedStatement.executeQuery();
             return resultSet.next();
         }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         finally {
             closeResources();
         }
+        return false;
     }
 
-
-    public static boolean isSamePassword(String email, String pass) throws SQLException
+    public static boolean isSamePassword(String email, String pass)
     {
         String sql = "SELECT Password FROM PERSON WHERE Email=?";
         try
@@ -83,7 +88,11 @@ public class Database {
                 String Password = resultSet.getString(1);
                 return Password.equals(pass);
             }
-        } finally {
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        finally {
             closeResources();
         }
         return false;
@@ -110,9 +119,8 @@ public class Database {
             if (resultSet.next())
                 return resultSet.getString("s_id");
         }
-        catch (SQLException e)
-        {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         finally
         {
@@ -143,9 +151,8 @@ public class Database {
             if (resultSet.next())
                 return resultSet.getString(1);
         }
-        catch (SQLException e)
-        {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         finally
         {
@@ -176,9 +183,8 @@ public class Database {
             if (resultSet.next())
                 return resultSet.getString(1);
         }
-        catch (SQLException e)
-        {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         finally
         {
@@ -188,7 +194,7 @@ public class Database {
         return "0";
     }
 
-    public static void insertPerson(String id, String email, String name, String password) throws SQLException
+    public static void insertPerson(String id, String email, String name, String password)
     {
         String insertPerson = "INSERT INTO PERSON (id, name, email, password) VALUES (?, ?, ?, ?)";
 
@@ -201,15 +207,15 @@ public class Database {
             preparedStatement.setString(4, password);
             preparedStatement.executeUpdate();
         }
-        catch (SQLException e) {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         finally {
             closeResources();
         }
     }
 
-    public static void insertStudentPersonData(String student_id, String person_id) throws SQLException
+    public static void insertStudentPersonData(String student_id, String person_id)
     {
         String insertStudentPerson = "INSERT INTO STUDENT_PERSON_DATA (STUDENT_ID, PERSON_ID) VALUES (?, ?)";
 
@@ -220,8 +226,8 @@ public class Database {
             preparedStatement.setString(2, person_id);
             preparedStatement.executeUpdate();
         }
-        catch (SQLException e) {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         finally {
             closeResources();
@@ -250,15 +256,15 @@ public class Database {
                 alert.show();
             }
         }
-        catch (SQLException e) {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         finally {
             closeResources();
         }
     }
 
-    public static void insertStaffPersonData(String staff_id, String person_id) throws SQLException
+    public static void insertStaffPersonData(String staff_id, String person_id)
     {
         String insertStaffPerson = "INSERT INTO STAFF_PERSON_DATA (STAFF_ID, PERSON_ID) VALUES (?, ?)";
 
@@ -269,8 +275,8 @@ public class Database {
             preparedStatement.setString(2, person_id);
             preparedStatement.executeUpdate();
         }
-        catch (SQLException e) {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         finally {
             closeResources();
@@ -296,15 +302,15 @@ public class Database {
                 alert.show();
             }
         }
-        catch (SQLException e) {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         finally {
             closeResources();
         }
     }
 
-    public static void insertGatekeeperPersonData(String gatekeeper_id, String person_id) throws SQLException
+    public static void insertGatekeeperPersonData(String gatekeeper_id, String person_id)
     {
         String insertGatekeeperPerson = "INSERT INTO GATEKEEPER_PERSON_DATA (GATEKEEPER_ID, PERSON_ID) VALUES (?, ?)";
 
@@ -315,8 +321,8 @@ public class Database {
             preparedStatement.setString(2, person_id);
             preparedStatement.executeUpdate();
         }
-        catch (SQLException e) {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         finally {
             closeResources();
@@ -342,8 +348,8 @@ public class Database {
                 alert.show();
             }
         }
-        catch (SQLException e) {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         finally {
             closeResources();
@@ -352,10 +358,10 @@ public class Database {
 
     public static void insertRoomData(Room room)
     {
-        String sql = "INSERT INTO ROOM (ID, ROOM_NUMBER, BUILDING, FLOOR, OCCUPIED) VALUES (?, ?, ?, ?, ?)";
+        String insertRoom = "INSERT INTO ROOM (ID, ROOM_NUMBER, BUILDING, FLOOR, OCCUPIED) VALUES (?, ?, ?, ?, ?)";
         try
         {
-            preparedStatement = conn.prepareStatement(sql);
+            preparedStatement = conn.prepareStatement(insertRoom);
             preparedStatement.setString(1, Database.getNextRoomId());
             preparedStatement.setString(2, room.getRoomNumber());
             preparedStatement.setString(3, room.getBuilding());
@@ -366,15 +372,106 @@ public class Database {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Room Added Successfully");
                 alert.show();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        finally {
             closeResources();
         }
     }
 
+    public static void makeRoomRequest(RoomRequest roomRequest)
+    {
+        String makeRoomRequest = "INSERT INTO room_requests (room_id, student_id, staff_id, status) VALUES (?, ?, NULL, 'pending')";
+        try
+        {
+            preparedStatement = conn.prepareStatement(makeRoomRequest);
+            preparedStatement.setString(1, roomRequest.getRoom().getId());
+            preparedStatement.setString(2, roomRequest.getStudent().getStudentId());
+            preparedStatement.executeQuery();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        finally {
+            closeResources();
+        }
+    }
 
-    public static String isAppliedForDorm(String id) throws SQLException
+    public static void approveRoomRequest(RoomRequest roomRequest)
+    {
+        String makeRoomRequest = """
+                                UPDATE
+                                    room_requests
+                                SET
+                                    staff_id = ?, status = 'approved'
+                                WHERE
+                                    room_id = ? AND student_id = ?""";
+        try
+        {
+            preparedStatement = conn.prepareStatement(makeRoomRequest);
+            preparedStatement.setString(1, roomRequest.getStaff().getStaff_id());
+            preparedStatement.setString(2, roomRequest.getRoom().getId());
+            preparedStatement.setString(3, roomRequest.getStudent().getStudentId());
+            preparedStatement.executeQuery();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        finally {
+            closeResources();
+        }
+
+        addToOccupiedRooms(roomRequest.getStudent().getStudentId(), roomRequest.getRoom().getId());
+    }
+
+    public static void rejectRoomRequest(RoomRequest roomRequest)
+    {
+        String rejectRequest = """
+                                UPDATE
+                                    room_requests
+                                SET
+                                    staff_id = ?, status = 'rejected'
+                                WHERE
+                                    room_id = ? AND student_id = ?""";
+        try
+        {
+            preparedStatement = conn.prepareStatement(rejectRequest);
+            preparedStatement.setString(1, roomRequest.getStaff().getStaff_id());
+            preparedStatement.setString(2, roomRequest.getRoom().getId());
+            preparedStatement.setString(3, roomRequest.getStudent().getStudentId());
+            preparedStatement.executeQuery();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        finally {
+            closeResources();
+        }
+
+        setAppliedForDorm(roomRequest.getStudent().getStudentId(), false);
+    }
+
+    public static void addToOccupiedRooms(String student_id, String room_id)
+    {
+        String occupyRoom = "INSERT INTO occupied_rooms (student_id, room_id) VALUES (?, ?)";
+        try
+        {
+            preparedStatement = conn.prepareStatement(occupyRoom);
+            preparedStatement.setString(1, student_id);
+            preparedStatement.setString(2, room_id);
+            preparedStatement.executeQuery();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        finally {
+            closeResources();
+        }
+    }
+
+    public static String isAppliedForDorm(String id)
     {
         String sql = "SELECT apllied_to_room FROM STUDENT WHERE id = ?";
         try {
@@ -384,12 +481,15 @@ public class Database {
             if (resultSet.next()) {
                 return resultSet.getString(1);
             }
-        } finally {
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        finally {
             closeResources();
         }
         return "0";
     }
-
 
     public static void setAppliedForDorm(String id, boolean applied)
     {
@@ -409,7 +509,6 @@ public class Database {
         }
     }
 
-
     private static void closeResources() {
         try {
             if (preparedStatement != null) {
@@ -419,12 +518,12 @@ public class Database {
                 resultSet.close();
             }
         }
-        catch (SQLException e) {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
-    public static Student getStudent(String id) throws SQLException
+    public static Student getStudent(String id)
     {
         String selectStudent = """
                 SELECT
@@ -465,8 +564,8 @@ public class Database {
                 return new Student(id, name, email, city, password, warnings, payment, applied_to_room, pId);
             }
         }
-        catch (SQLException e) {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         finally {
             closeResources();
@@ -475,7 +574,7 @@ public class Database {
         return null;
     }
 
-    public static ArrayList<Student> getAllStudents() throws SQLException
+    public static ArrayList<Student> getAllStudents()
     {
         String selectallStudents = """
                 SELECT
@@ -513,8 +612,8 @@ public class Database {
                 allStudents.add(new Student(id, name, email, city, password, warnings, payment, applied_to_room, pId));
             }
         }
-        catch (SQLException e) {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         finally {
             closeResources();
@@ -523,7 +622,7 @@ public class Database {
         return allStudents;
     }
 
-    public static Staff getStaff(String id) throws SQLException
+    public static Staff getStaff(String id)
     {
         String selectStaff = """
                 SELECT
@@ -558,8 +657,8 @@ public class Database {
                 return new Staff(name, email, salary, pId, password, id);
             }
         }
-        catch (SQLException e) {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         finally {
             closeResources();
@@ -568,7 +667,7 @@ public class Database {
         return null;
     }
 
-    public static Gatekeeper getGatekeeper(String id) throws SQLException
+    public static Gatekeeper getGatekeeper(String id)
     {
         String selectGatekeeper = """
                 SELECT
@@ -603,14 +702,158 @@ public class Database {
                 return new Gatekeeper(name, email, salary, pId, password, id);
             }
         }
-        catch (SQLException e) {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         finally {
             closeResources();
         }
 
         return null;
+    }
+
+    public static Room getRoom(String id)
+    {
+        String selectRoom = """
+                SELECT
+                    *
+                FROM
+                    room
+                WHERE
+                    id = ?;
+                """;
+
+        try
+        {
+            preparedStatement = conn.prepareStatement(selectRoom);
+            preparedStatement.setString(1, id);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next())
+            {
+                id = resultSet.getString(1);
+                String floor = resultSet.getString(2);
+                String building = resultSet.getString(3);
+                boolean occupied = resultSet.getBoolean(4);
+                String roomNumber = resultSet.getString(5);
+
+                return new Room(roomNumber, floor, building, occupied, id);
+            }
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        finally {
+            closeResources();
+        }
+
+        return null;
+    }
+
+    public static ArrayList<Room> getAllNonOccupiedRooms()
+    {
+        String selectAllRooms = """
+                SELECT
+                    *
+                FROM
+                    room
+                WHERE
+                    occupied = false
+                """;
+
+        ArrayList<Room> allRooms = new ArrayList<>();
+        try
+        {
+            preparedStatement = conn.prepareStatement(selectAllRooms);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next())
+            {
+                String id = resultSet.getString(1);
+                String floor = resultSet.getString(2);
+                String building = resultSet.getString(3);
+                boolean occupied = resultSet.getBoolean(4);
+                String roomNumber = resultSet.getString(5);
+
+                allRooms.add(new Room(roomNumber, floor, building, occupied, id));
+            }
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        finally {
+            closeResources();
+        }
+
+        return allRooms;
+    }
+
+    public static ArrayList<Room> getAllRooms()
+    {
+        String selectAllRooms = """
+                SELECT
+                    *
+                FROM
+                    room
+                """;
+
+        ArrayList<Room> allRooms = new ArrayList<>();
+        try
+        {
+            preparedStatement = conn.prepareStatement(selectAllRooms);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next())
+            {
+                String id = resultSet.getString(1);
+                String floor = resultSet.getString(2);
+                String building = resultSet.getString(3);
+                boolean occupied = resultSet.getBoolean(4);
+                String roomNumber = resultSet.getString(5);
+
+                allRooms.add(new Room(roomNumber, floor, building, occupied, id));
+            }
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        finally {
+            closeResources();
+        }
+
+        return allRooms;
+    }
+
+    public static ArrayList<RoomRequest> getAllRoomRequests()
+    {
+        String selectAllRoomRequests = """
+                SELECT
+                    *
+                FROM
+                    room_requests
+                """;
+
+        ArrayList<RoomRequest> allRequests = new ArrayList<>();
+        try
+        {
+            preparedStatement = conn.prepareStatement(selectAllRoomRequests);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next())
+            {
+                String room_id = resultSet.getString(1);
+                String student_id = resultSet.getString(2);
+                String staff_id = resultSet.getString(3);
+                String status = resultSet.getString(4);
+
+                allRequests.add(new RoomRequest(
+                        Database.getRoom(room_id), Database.getStudent(student_id), Database.getStaff(staff_id), status));
+            }
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        finally {
+            closeResources();
+        }
+
+        return allRequests;
     }
 
     public static String getNextPersonId()
@@ -628,8 +871,8 @@ public class Database {
                 return String.valueOf(resultSet.getInt(1));
             }
         }
-        catch (SQLException e) {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         finally {
             closeResources();
@@ -640,21 +883,21 @@ public class Database {
 
     public static String getNextStaffId()
     {
-        String nextSaffId = """
+        String nextStaffId = """
                 SELECT nextval('staff_id_seq');
                 """;
 
         try
         {
-            preparedStatement = conn.prepareStatement(nextSaffId);
+            preparedStatement = conn.prepareStatement(nextStaffId);
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next())
             {
                 return String.valueOf(resultSet.getInt(1));
             }
         }
-        catch (SQLException e) {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         finally {
             closeResources();
@@ -678,8 +921,8 @@ public class Database {
                 return String.valueOf(resultSet.getInt(1));
             }
         }
-        catch (SQLException e) {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         finally {
             closeResources();
@@ -703,8 +946,8 @@ public class Database {
                 return String.valueOf(resultSet.getInt(1));
             }
         }
-        catch (SQLException e) {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         finally {
             closeResources();
@@ -728,8 +971,8 @@ public class Database {
                 return String.valueOf(resultSet.getInt(1));
             }
         }
-        catch (SQLException e) {
-            e.printStackTrace();
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         finally {
             closeResources();

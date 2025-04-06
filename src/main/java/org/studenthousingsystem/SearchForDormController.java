@@ -9,27 +9,27 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class SearchForDormController {
     @FXML
-    private TableView<RoomRequest> roomTable;
+    private TableView<Room> roomTable;
 
     @FXML
-    private TableColumn<RoomRequest, String> RoomNo;
+    private TableColumn<Room, String> buildingColumn, floorColumn, roomColumn;
+    @FXML
+    private TableColumn<Room, Button> applyColumn;
+
+    private ObservableList<Room> rooms;
 
     @FXML
     private ImageView profilePic;
@@ -44,6 +44,37 @@ public class SearchForDormController {
     private Parent root;
 
     @FXML
+    public void initialize()
+    {
+        profilePic.setImage(new Image("D:\\Personal\\Github Projects\\student housing system\\Student-Housing-Management-System\\src\\main\\resources\\org\\studenthousingsystem\\ProfilePic.png"));
+
+        roomColumn.setCellValueFactory(new PropertyValueFactory<>("roomNumber"));
+        buildingColumn.setCellValueFactory(new PropertyValueFactory<>("building"));
+        floorColumn.setCellValueFactory(new PropertyValueFactory<>("floor"));
+        applyColumn.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(Button item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || getTableRow() == null || getTableRow().getItem() == null) {
+                    setGraphic(null);
+                } else {
+                    Room room = getTableRow().getItem();
+                    setGraphic(room.getApplyButton());
+                }
+            }
+        });
+
+        rooms = FXCollections.observableArrayList();
+
+        rooms.addAll(Database.getAllNonOccupiedRooms());
+
+        roomTable.setItems(rooms);
+
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.scheduleAtFixedRate(this::Search, 0, 400, TimeUnit.MILLISECONDS);
+    }
+
+    @FXML
     public void onLogoutBtnClicked(javafx.event.ActionEvent actionEvent) throws IOException {
         root = FXMLLoader.load((getClass().getResource("Login.fxml")));
         stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
@@ -53,50 +84,24 @@ public class SearchForDormController {
     }
 
     @FXML
-    public void Search() {
+    public void Search()
+    {
+        FilteredList<Room> filter = new FilteredList<>(rooms, e -> true);
 
-        ObservableList<RoomRequest> data = FXCollections.observableArrayList();
-
-        data.addAll(new RoomRequest("Room 1"),
-                new RoomRequest("Room 2"),
-                new RoomRequest("Room 3")
-        );
-
-        roomTable.setItems(data);
-
-        FilteredList<RoomRequest> filter = new FilteredList<>(data, e-> true);
-
-        filter.setPredicate(room ->{
-            if(searchField.getText() == null || searchField.getText().isEmpty())
+        filter.setPredicate(room -> {
+            if (searchField.getText() == null || searchField.getText().isEmpty())
                 return true;
-            String s = searchField.getText().toLowerCase().trim();
-            if(room.getRoom().contains(searchField.getText()))
-                return true;
-            else return room.getRoom().toLowerCase().contains(s);
+
+            String searchText = searchField.getText().toLowerCase().trim();
+
+            return room.getRoomNumber().toLowerCase().contains(searchText) ||
+                    room.getBuilding().toLowerCase().contains(searchText) ||
+                    room.getFloor().toLowerCase().contains(searchText);
         });
 
-        SortedList <RoomRequest> sort = new SortedList<>(filter);
+        SortedList<Room> sort = new SortedList<>(filter);
         sort.comparatorProperty().bind(roomTable.comparatorProperty());
         roomTable.setItems(sort);
-    }
-
-    public void initialize() {
-        profilePic.setImage(new Image("D:\\Personal\\Github Projects\\student housing system\\Student-Housing-Management-System\\src\\main\\resources\\org\\studenthousingsystem\\ProfilePic.png"));
-        RoomNo.setCellValueFactory(new PropertyValueFactory<>("room"));
-
-        TableColumn<RoomRequest, Button> actionCol = new TableColumn<>("Action");
-        actionCol.setCellValueFactory(new PropertyValueFactory<>("actionButton"));
-
-        roomTable.getColumns().addAll(actionCol);
-
-        roomTable.getItems().addAll(
-                new RoomRequest("Room 1"),
-                new RoomRequest("Room 2"),
-                new RoomRequest("Room 3")
-        );
-
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        executor.scheduleAtFixedRate(this::Search, 0, 400, TimeUnit.MILLISECONDS);
     }
 
     @FXML

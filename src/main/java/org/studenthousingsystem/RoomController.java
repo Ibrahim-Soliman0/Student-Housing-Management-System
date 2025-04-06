@@ -39,7 +39,7 @@ public class RoomController {
     }
 
     @FXML
-    public void roomAddedAlert()
+    public void addRoom()
     {
         String roomNumber = roomNumberTextField.getText().trim();
         String floorNumber = floorNumberTextField.getText().trim();
@@ -47,6 +47,25 @@ public class RoomController {
 
         boolean isFilled = isOccupied.isSelected();
 
-        Database.insertRoomData(new Room(roomNumber, floorNumber, buildingNumber, isFilled));
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        if (roomNumber.isEmpty())
+        {
+            alert.setContentText("Room Number Can't be empty");
+            alert.show();
+        }
+        else if (floorNumber.isEmpty())
+        {
+            alert.setContentText("Floor Number Can't be empty");
+            alert.show();
+        }
+        else if (buildingNumber.isEmpty())
+        {
+            alert.setContentText("Building Number Can't be empty");
+            alert.show();
+        }
+        else
+        {
+            Database.insertRoomData(new Room(roomNumber, floorNumber, buildingNumber, isFilled));
+        }
     }
 }

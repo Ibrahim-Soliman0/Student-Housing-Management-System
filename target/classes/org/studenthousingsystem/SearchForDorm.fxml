@@ -14,7 +14,10 @@
       <TextField fx:id="searchField" layoutX="36.0" layoutY="22.0" prefHeight="28.0" prefWidth="298.0" />
       <TableView fx:id="roomTable" layoutX="34.0" layoutY="73.0" prefHeight="316.0" prefWidth="380.0">
         <columns>
-          <TableColumn fx:id="RoomNo" prefWidth="308.0" text="RoomNo" />
+          <TableColumn fx:id="buildingColumn" prefWidth="89.0" resizable="false" text="Building" />
+            <TableColumn fx:id="floorColumn" prefWidth="91.0" resizable="false" text="Floor" />
+            <TableColumn fx:id="roomColumn" prefWidth="105.0" resizable="false" text="Room" />
+            <TableColumn fx:id="applyColumn" prefWidth="94.0" resizable="false" text="Apply" />
         </columns>
       </TableView>
       <Button fx:id="logoutBtn" layoutX="174.0" layoutY="398.0" mnemonicParsing="false" onAction="#onLogoutBtnClicked" prefHeight="38.0" prefWidth="101.0" text="&lt; Logout">

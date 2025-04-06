@@ -26,23 +26,23 @@ public class AddStudentController implements Initializable {
     @FXML
     PasswordField password_passwordField ;
     @FXML
-    Button addButton, showAdminpage_btn;
+    Button addButton, showStaffPageBtn;
     @FXML
     Label myLabel;
     @FXML
-    private ChoiceBox<String> myChoiceBox;
+    private ComboBox<String> cityComboBox;
 
-    private String[] Cities = {"Alexandria", "Aswan", "Assiout", "Beheira", "Beni Souef", "Cairo", "Dakahleya", "Damietta",
+    private final String[] Cities = {"Alexandria", "Aswan", "Assiout", "Beheira", "Beni Souef", "Cairo", "Dakahleya", "Damietta",
     "Fayoum", "Gharbeya", "Giza", "Ismailia", "Kafr el-Cheik", "Marsa-Matruh", "Minya", "Menufeya", "New Valley",
     "North Sinai", "Port Said", "Qalyubiya", "Qena", "Red Sea", "Ach-Charqiya", "Sohag", "South Sinai", "Suez", "Luxor"};
 
     private Stage stage;
-    @FXML
     private Scene scene;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        myChoiceBox.getItems().addAll(Cities);
+        cityComboBox.getItems().addAll(Cities);
+        cityComboBox.setVisibleRowCount(3);
     }
 
     @FXML
@@ -62,7 +62,7 @@ public class AddStudentController implements Initializable {
         email = email_textfield.getText().trim();
         id = id_textfield.getText().trim();
         name = name_textfield.getText().trim();
-        city = myChoiceBox.getValue();
+        city = cityComboBox.getValue();
         password = password_passwordField.getText().trim();
 
         Alert alert;
