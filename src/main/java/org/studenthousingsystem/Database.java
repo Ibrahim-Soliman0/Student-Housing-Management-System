@@ -2,10 +2,12 @@ package org.studenthousingsystem;
 
 import javafx.scene.control.Alert;
 
+import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static org.studenthousingsystem.StudentHousingSystem.conn;
@@ -53,6 +55,20 @@ public class Database {
             return hashedPassword;
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static void closeResources() {
+        try {
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+            if (resultSet != null) {
+                resultSet.close();
+            }
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -493,34 +509,58 @@ public class Database {
 
     public static void setAppliedForDorm(String id, boolean applied)
     {
+        String sql = "UPDATE STUDENT SET APPLIED_TO_ROOM = ? WHERE id = ?";
         try
         {
-            String sql = "UPDATE STUDENT SET APPLIED_TO_ROOM = ? WHERE id = ?";
             preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setBoolean(1, applied);
             preparedStatement.setString(2, id);
             preparedStatement.executeUpdate();
         }
         catch (Exception e) {
-            System.out.println("[!] Error");
+            System.out.println(e.getMessage());
         }
         finally {
             closeResources();
         }
     }
 
-    private static void closeResources() {
-        try {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (resultSet != null) {
-                resultSet.close();
-            }
+    public static void giveWarningToStudent(Student student, int warnings)
+    {
+        String giveWarning = "UPDATE STUDENT SET warnings = ? WHERE id = ?";
+        try
+        {
+            preparedStatement = conn.prepareStatement(giveWarning);
+            preparedStatement.setInt(1, warnings);
+            preparedStatement.setString(2, student.getStudentId());
+            preparedStatement.executeUpdate();
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        finally {
+            closeResources();
+        }
+    }
+
+    public static boolean isADormStudent(Student student)
+    {
+        String isADormStudent = "SELECT * FROM occupied_rooms WHERE student_id = ?";
+        try
+        {
+            preparedStatement = conn.prepareStatement(isADormStudent);
+            preparedStatement.setString(1, student.getStudentId());
+            resultSet = preparedStatement.executeQuery();
+            return resultSet.next();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        finally {
+            closeResources();
+        }
+
+        return false;
     }
 
     public static Student getStudent(String id)
@@ -854,6 +894,33 @@ public class Database {
         }
 
         return allRequests;
+    }
+
+    public static boolean insertStudentToEntranceLog(Student student, Gatekeeper gatekeeper, LocalDateTime time, String type)
+    {
+        String insertStudentToEntranceLog = """
+                        INSERT INTO student_entrance_log (id, gatekeeper_id, student_id, time, type) VALUES(?,?,?,?,?);
+                        """;
+
+        try
+        {
+            preparedStatement = conn.prepareStatement(insertStudentToEntranceLog);
+            preparedStatement.setString(1, Database.getNextEntranceLogId());
+            preparedStatement.setString(2, gatekeeper.getId());
+            preparedStatement.setString(3, student.getStudentId());
+            preparedStatement.setTimestamp(4, Timestamp.valueOf(time));
+            preparedStatement.setString(5, type);
+            resultSet = preparedStatement.executeQuery();
+            return resultSet.next();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        finally {
+            closeResources();
+        }
+
+        return false;
     }
 
     public static String getNextPersonId()

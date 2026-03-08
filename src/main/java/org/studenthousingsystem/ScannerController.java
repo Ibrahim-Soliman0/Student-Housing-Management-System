@@ -23,14 +23,18 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class ScannerController {
 
+    private static boolean entrance = false, exit = false;
+    private final LocalDateTime  curfewTimeStart = LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.MIDNIGHT),
+            curfewTimeEnd = LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.of(7, 0));
     private Webcam webcam;
-    private boolean entrance = false, exit = false;
     private MultiFormatReader multiFormatReader;
     @FXML
     private ImageView cameraFeed;
@@ -111,7 +115,8 @@ public class ScannerController {
         }
     }
 
-    private void closeWebcam() {
+    private void closeWebcam()
+    {
         if (webcam != null && webcam.isOpen())
         {
             webcam.close();
@@ -129,7 +134,8 @@ public class ScannerController {
         }
     }
 
-    private void updateFrame() {
+    private void updateFrame()
+    {
 
         BufferedImage image = webcam.getImage();
         if (image != null)
@@ -149,9 +155,75 @@ public class ScannerController {
                     Result result = multiFormatReader.decode(binaryBitmap);
                     if (result != null)
                     {
-                        String numeric = "^[0-9]*$";
-                        if (result.getText().matches(numeric))
-                            studentID.setText("Student ID: " + result.getText());
+                        String numeric = "^[0-9]*$", studentId = result.getText().trim();
+                        if (studentId.matches(numeric))
+                        {
+                            Student scannedStudent = Database.getStudent(studentId);
+                            LocalDateTime currentTime = LocalDateTime.now();
+                            studentID.setText("Student ID: " + studentId);
+                            if (scannedStudent != null)
+                            {
+                                if (Database.isADormStudent(scannedStudent))
+                                {
+                                    if (entrance)
+                                    {
+                                        if (Database.insertStudentToEntranceLog
+                                                (scannedStudent, StudentHousingSystem.gatekeeper, currentTime, "enter"))
+                                        {
+                                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                                            alert.setTitle("Confirmation");
+                                            alert.setHeaderText("The Student has been entered");
+                                            alert.show();
+                                        }
+                                        else
+                                        {
+                                            Alert alert = new Alert(Alert.AlertType.ERROR);
+                                            alert.setTitle("Error");
+                                            alert.setHeaderText("The Student has not been entered");
+                                            alert.show();
+                                        }
+                                    }
+                                    else if (exit)
+                                    {
+                                        if (Database.insertStudentToEntranceLog
+                                                (scannedStudent, StudentHousingSystem.gatekeeper, currentTime, "exit"))
+                                        {
+                                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                                            alert.setTitle("Confirmation");
+                                            alert.setHeaderText("The Student has been exited");
+                                            alert.show();
+                                        }
+                                        else
+                                        {
+                                            Alert alert = new Alert(Alert.AlertType.ERROR);
+                                            alert.setTitle("Error");
+                                            alert.setHeaderText("The Student has not been exited");
+                                            alert.show();
+                                        }
+                                    }
+
+                                    if (currentTime.isAfter(curfewTimeStart)
+                                            && currentTime.isBefore(curfewTimeEnd))
+                                    {
+                                        Database.giveWarningToStudent(scannedStudent, scannedStudent.getWarnings() + 1);
+                                    }
+                                }
+                                else
+                                {
+                                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                                    alert.setTitle("Error");
+                                    alert.setHeaderText("This student has not applied for a room");
+                                    alert.show();
+                                }
+                            }
+                            else
+                            {
+                                Alert alert = new Alert(Alert.AlertType.ERROR);
+                                alert.setTitle("Error");
+                                alert.setHeaderText("Invalid Qrcode");
+                                alert.show();
+                            }
+                        }
                         else
                         {
                             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -162,9 +234,10 @@ public class ScannerController {
                         closeWebcam();
                     }
                 }
-                catch (IOException e) {
-                    e.printStackTrace();
-                } catch (NotFoundException e) {}
+                catch (IOException | NotFoundException e)
+                {
+                    System.out.println(e.getMessage());
+                }
             });
         }
         else
